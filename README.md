@@ -15,3 +15,6 @@ The file contents are as follows:
 **BioID_annotation.R** annotates 50 RBPs with GO terms based on their protein neighborhoods identified by BioID using signed_log_pv_BioID.tsv source file. For this, lists of protein partners for each RBP are ranked by z-scored signed p-values obtained from BioID and tested for the GO terms enrichment using gene set enrichment analysis (gsea). The resulting GO pathways are filtered by NES > 2 for at least one RBP followed by bi-clustering and heatmap visualization.
 
 In detail, the script annotates the RBPs based upon preys identified in BioID experiments starting from the signed p-values estimated as -log<sub>10</sub>(p-values)\*sign(log<sub>2</sub>FC) for every bait-prey pair separately. For each prey, signed p-values are converted to Z-scores by estimating the mean and sd across baits. Z-scores rank the preys and gsea is applied using three GO terms annotation sets (biological processes (BP), molecular functions (MF), and cell components (CC), each taken separately). Lists of 2865 preys Entrez ids are used in gene set enrichment analysis for each RBP of the whole set of fifty. In the end, Ward’s clusterization with cosine distance is used to generate the GO BP annotation heatmap.
+
+
+[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10498278.svg)](https://doi.org/10.5281/zenodo.10498278)
