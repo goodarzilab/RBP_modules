@@ -43,10 +43,10 @@ for(i in seq(from=1,to=nrow(bioid_z), by=1)){
 bioid_z <- bioid_z[rowSums(bioid_z!=0)>0,]
 bioid_cosine <- cos.dissim(t(bioid_z))
 
-#eCLIP (not Z-scored in the current version)
+#eCLIP
 eclip_z <- read.table('signed_log_pv_eCLIP.tsv', sep='\t', header=TRUE, row.names = 1)
 for(i in seq(from=1,to=nrow(eclip_z), by=1)){
-#    eclip_z[i,][!is.na(eclip_z[i,])] <- z_norm(as.numeric(eclip_z[i,][!is.na(eclip_z[i,])]))
+    eclip_z[i,][!is.na(eclip_z[i,])] <- z_norm(as.numeric(eclip_z[i,][!is.na(eclip_z[i,])]))
     eclip_z[i,is.na(eclip_z[i,])] <- 0
     eclip_z[i,eclip_z[i,]<0] <- 0
 }
