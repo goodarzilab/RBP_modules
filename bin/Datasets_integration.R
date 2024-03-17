@@ -5,6 +5,29 @@ library(gplots)
 library(extrafont)
 library(extrafontdb)
 
+# Read command line arguments
+args <- commandArgs(trailingOnly = TRUE)
+
+# Initialize variables for filenames with default values if necessary
+bioID_filename <- "signed_log_pv_BioID.tsv"  # Default filename for BioID
+eCLIP_filename <- "signed_log_pv_eCLIP.tsv"  # Default filename for eCLIP
+perturbSeq_filename <- "signed_log_pv_Perturbseq.tsv"  # Default filename for PerturbSeq
+
+# Parse command line arguments
+for (arg in args) {
+  key_value <- strsplit(arg, "=")[[1]]
+  if (length(key_value) == 2) {
+    if (key_value[1] == "BioID") {
+      bioID_filename <- key_value[2]
+    } else if (key_value[1] == "eCLIP") {
+      eCLIP_filename <- key_value[2]
+    } else if (key_value[1] == "PerturbSeq") {
+      perturbSeq_filename <- key_value[2]
+    }
+  }
+}
+
+
 cos.dissim <- function(x)
 {
     outp <- matrix(nrow = length(x[,1]), ncol = length(x[,1]))
@@ -35,7 +58,7 @@ obs_pvs <- function(x){
 
 ##Obtaining signed logPvs
 #BioID
-bioid_z <- read.table('signed_log_pv_BioID.tsv', sep='\t', header=TRUE, row.names = 1)
+bioid_z <- read.table(bioID_filename, sep='\t', header=TRUE, row.names = 1)
 for(i in seq(from=1,to=nrow(bioid_z), by=1)){
     bioid_z[i,] <- z_norm(as.numeric(bioid_z[i,]))
     bioid_z[i,bioid_z[i,]<0] <- 0
@@ -44,7 +67,7 @@ bioid_z <- bioid_z[rowSums(bioid_z!=0)>0,]
 bioid_cosine <- cos.dissim(t(bioid_z))
 
 #eCLIP
-eclip_z <- read.table('signed_log_pv_eCLIP.tsv', sep='\t', header=TRUE, row.names = 1)
+eclip_z <- read.table(eCLIP_filename, sep='\t', header=TRUE, row.names = 1)
 for(i in seq(from=1,to=nrow(eclip_z), by=1)){
     eclip_z[i,][!is.na(eclip_z[i,])] <- z_norm(as.numeric(eclip_z[i,][!is.na(eclip_z[i,])]))
     eclip_z[i,is.na(eclip_z[i,])] <- 0
@@ -54,7 +77,7 @@ eclip_z <- eclip_z[rowSums(eclip_z!=0)>0,]
 eclip_cosine <- cos.dissim(t(eclip_z))
 
 #Perturb-seq
-perseq_z <- read.table('signed_log_pv_Perturbseq.tsv', sep='\t', header=TRUE, row.names = 1)
+perseq_z <- read.table(perturbSeq_filename, sep='\t', header=TRUE, row.names = 1)
 for(i in seq(from=1,to=nrow(perseq_z), by=1)){
     perseq_z[i,] <- z_norm(as.numeric(perseq_z[i,]))
 }

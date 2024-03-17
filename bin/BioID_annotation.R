@@ -9,6 +9,32 @@ library(extrafont)
 library(extrafontdb)
 library(tidyverse)
 
+# Read command line arguments
+args <- commandArgs(trailingOnly = TRUE)
+
+# Default values for nperm, nproc, and input file
+nperm <- 100000
+nproc <- 40
+input_file <- 'signed_log_pv_BioID.tsv'  # Default input file name
+
+# Parse command line arguments
+for (i in seq_along(args)) {
+  arg <- strsplit(args[i], "=")[[1]]
+  if (length(arg) == 2) {
+    if (arg[1] == "nperm") {
+      nperm <- as.numeric(arg[2])
+    } else if (arg[1] == "nproc") {
+      nproc <- as.numeric(arg[2])
+    } else if (arg[1] == "input") {
+      input_file <- arg[2]
+    }
+  }
+}
+
+# Use the input file variable when reading the file
+# For example:
+
+
 cos.dissim <- function(x)
 {
     outp <- matrix(nrow = length(x[,1]), ncol = length(x[,1]))
@@ -36,7 +62,7 @@ go_mf=go_gs$go.sets[go_gs$go.subs$MF]
 go_cc=go_gs$go.sets[go_gs$go.subs$CC]
 
 #Obtaining z-scores table with ENTREZID
-signed_pv_scores <- read.table('signed_log_pv_BioID.tsv', sep='\t', header=TRUE, row.names = 1)
+signed_pv_scores <- read.table(input_file, sep='\t', header=TRUE, row.names = 1)
 signed_pv_scores$Prots <- row.names(signed_pv_scores)
 signed_pv_scores <- data.frame(separate_rows(signed_pv_scores, Prots, sep = ';'))
 symb_to_ids <- data.frame(mapIds(org.Hs.eg.db, signed_pv_scores$Prots, "ENTREZID", "SYMBOL", multiVals = "filter"))
@@ -60,7 +86,7 @@ set.seed(13)
 fgseaResList_signed_pv_BP <- list()
 for(i in seq(from=2,to=ncol(z_scores_signed_pv),by=1)){
     print(i)
-    fgseaRes_BP <- fgsea(pathways=go_bp, stats=deframe(z_scores_signed_pv[,c(1,i)])[order(deframe(z_scores_signed_pv[,c(1,i)]), decreasing = FALSE)], nperm=100000, nproc=40)
+    fgseaRes_BP <- fgsea(pathways=go_bp, stats=deframe(z_scores_signed_pv[,c(1,i)])[order(deframe(z_scores_signed_pv[,c(1,i)]), decreasing = FALSE)], nperm=nperm, nproc=nproc)
     fgseaResList_signed_pv_BP[[(i-1)]] <- fgseaRes_BP
 }
 
@@ -68,7 +94,7 @@ for(i in seq(from=2,to=ncol(z_scores_signed_pv),by=1)){
 fgseaResList_signed_pv_MF <- list()
 for(i in seq(from=2,to=ncol(z_scores_signed_pv),by=1)){
     print(i)
-    fgseaRes_MF <- fgsea(pathways=go_mf, stats=deframe(z_scores_signed_pv[,c(1,i)])[order(deframe(z_scores_signed_pv[,c(1,i)]), decreasing = FALSE)], nperm=100000, nproc=40)
+    fgseaRes_MF <- fgsea(pathways=go_mf, stats=deframe(z_scores_signed_pv[,c(1,i)])[order(deframe(z_scores_signed_pv[,c(1,i)]), decreasing = FALSE)], nperm=nperm, nproc=nproc)
     fgseaResList_signed_pv_MF[[(i-1)]] <- fgseaRes_MF
 }
 
@@ -76,7 +102,7 @@ for(i in seq(from=2,to=ncol(z_scores_signed_pv),by=1)){
 fgseaResList_signed_pv_CC <- list()
 for(i in seq(from=2,to=ncol(z_scores_signed_pv),by=1)){
     print(i)
-    fgseaRes_CC <- fgsea(pathways=go_cc, stats=deframe(z_scores_signed_pv[,c(1,i)])[order(deframe(z_scores_signed_pv[,c(1,i)]), decreasing = FALSE)], nperm=100000, nproc=40)
+    fgseaRes_CC <- fgsea(pathways=go_cc, stats=deframe(z_scores_signed_pv[,c(1,i)])[order(deframe(z_scores_signed_pv[,c(1,i)]), decreasing = FALSE)], nperm=nperm, nproc=nproc)
     fgseaResList_signed_pv_CC[[(i-1)]] <- fgseaRes_CC
 }
 
