@@ -1,6 +1,6 @@
 # RBP Modules: Integrative Analysis of RBP Similarities and Functional Annotation
 
-This repository contains a set of scripts designed for (1) an integrative assessment of RNA-binding protein (RBP) similarities, and (2) functional annotation of RBPs using BioID data.
+This repository contains a set of scripts designed for (1) an integrative assessment of RNA-binding protein (RBP) regulatory interactions, and (2) functional annotation of RBPs using BioID data.
 
 ## System Requirements
 
@@ -67,12 +67,8 @@ Rscript bin/BioID_annotation.R nperm=1000 nproc=10 input=data/signed_log_pv_BioI
 ### License
 This software is distributed under the GNU GENERAL PUBLIC LICENSE. For more information, see the LICENSE file in the repository.
 
-### Repository Link
-[RBP Modules Repository](https://github.com/goodarzilab/RBP_modules)
 
-[![DOI](https://zenodo.org/badge/DOI/10.5281/zenodo.10498278.svg)](https://doi.org/10.5281/zenodo.10498278)
-
-## Analysis Workflow Description"
+## Analysis Workflow Description
 
 ### 1. Dataset integration for estimating functional RBP similarities
 The data integration procedure is handled by **Datasets_integration.R**. The script normalizes signed p-values derived from the analysis of the BioID, eCLIP, and Perturb-seq experiments using Z-scoring followed by cosine distances estimation. Next, the calculation of the empirical p-values using sorted RBP-RBP distances and p-values aggregation are performed to produce the integrated pairwise distances.
