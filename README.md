@@ -17,7 +17,7 @@ This repository contains a set of scripts designed for (1) an integrative assess
 
 For the installation of individual package dependencies, please follow the official installation guides provided by each package's documentation. Installation time might vary depending on your system.
 
-We recommend using conda to create the RBP_modules environment from a provided yml file, see below.
+We recommend using conda to create the RBP_modules environment from a provided .yml file, see below.
 
 ### Operating Systems
 - Tested on Ubuntu 20.04 LTS and Windows 10
