@@ -5,22 +5,18 @@ This repository contains a set of scripts designed for (1) an integrative assess
 ## System Requirements
 
 ### Software Dependencies and Versions
-- R version 4.2.2
+- R version 4.3.3
 - R packages:
-  - tidyr (v1.3.0)
-  - gage (v2.48.0)
-  - AnnotationDbi (v1.60.2)
-  - org.Hs.eg.db (v3.16.0)
-  - fgsea (v1.24.0)
-  - gplots (v3.1.3.1)
   - colorspace (v2.1-0)
-  - extrafont (v0.19)
-  - extrafontdb (v1.0)
-  - tidyverse (v2.0.0)
+  - fgsea (v1.28.0)
+  - gplots (v3.1.3.1)
   - metap (v1.1)
-  - stringr (v1.5.0)
+  - rlist (v0.4.6.2)
+  - stringr (v1.5.1)
+  - tidyverse (v2.0.0)
 
 For the installation of individual package dependencies, please follow the official installation guides provided by each package's documentation. Installation time might vary depending on your system.
+We recommend using conda to create the "RBP_modules" environment from a provided yml file, see below.
 
 ### Operating Systems
 - Tested on Ubuntu 20.04 LTS and Windows 10
@@ -38,6 +34,14 @@ git clone https://github.com/goodarzilab/RBP_modules.git
 ```
 cd RBP_modules
 ```
+3. Create conda environment:
+```
+conda env create -f bin/RBP_modules_env.yml
+```
+4. Activate the environment:
+```
+conda activate RBP_modules
+```
 
 ## Demo
 
@@ -49,11 +53,13 @@ unzip data.zip -d data
 ```
 2. Run the dataset integration:
 ```
-Rscript bin/Datasets_integration.R BioID=data/signed_log_pv_BioID.tsv eCLIP=data/signed_log_pv_eCLIP.tsv PerturbSeq=data/signed_log_pv_Perturbseq.tsv
+Rscript bin/Datasets_integration.R condapath=/home/user/miniconda3/envs/RBP_modules BioID=data/signed_log_pv_BioID.tsv eCLIP=data/signed_log_pv_eCLIP.tsv PerturbSeq=data/signed_log_pv_Perturbseq.tsv
+# Here condapath is the path to RBP_modules environment needed to avoid R dependency issues, can be obtained by running "conda list | head -1".
+# Other parameters can be omitted and set to default.
 ```
 3. Run the functional annotation:
 ```
-Rscript bin/BioID_annotation.R nperm=1000 nproc=10 input=data/signed_log_pv_BioID.tsv
+Rscript bin/BioID_annotation.R condapath=/home/user/miniconda3/envs/RBP_modules nperm=1000 nproc=10 input=data/signed_log_pv_BioID.tsv
 ```
 
 ### Expected Output
