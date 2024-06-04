@@ -16,7 +16,8 @@ This repository contains a set of scripts designed for (1) an integrative assess
   - tidyverse (v2.0.0)
 
 For the installation of individual package dependencies, please follow the official installation guides provided by each package's documentation. Installation time might vary depending on your system.
-We recommend using conda to create the "RBP_modules" environment from a provided yml file, see below.
+
+We recommend using conda to create the RBP_modules environment from a provided yml file, see below.
 
 ### Operating Systems
 - Tested on Ubuntu 20.04 LTS and Windows 10
@@ -54,9 +55,13 @@ unzip data.zip -d data
 2. Run the dataset integration:
 ```
 Rscript bin/Datasets_integration.R condapath=/home/user/miniconda3/envs/RBP_modules BioID=data/signed_log_pv_BioID.tsv eCLIP=data/signed_log_pv_eCLIP.tsv PerturbSeq=data/signed_log_pv_Perturbseq.tsv
-# Here condapath is the path to RBP_modules environment needed to avoid R dependency issues, can be obtained by running "conda list | head -1".
-# Other parameters can be omitted and set to default.
 ```
+Here condapath is the path to RBP_modules environment needed to avoid R dependency issues, can be obtained by running:
+```
+conda list | head -1
+```
+Other parameters can be omitted and set to default.
+
 3. Run the functional annotation:
 ```
 Rscript bin/BioID_annotation.R condapath=/home/user/miniconda3/envs/RBP_modules nperm=1000 nproc=10 input=data/signed_log_pv_BioID.tsv
