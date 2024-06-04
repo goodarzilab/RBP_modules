@@ -1,17 +1,10 @@
-library(metap)
-library(stringr)
-library(colorspace)
-library(gplots)
-library(extrafont)
-library(extrafontdb)
-
 # Read command line arguments
 args <- commandArgs(trailingOnly = TRUE)
 
 # Initialize variables for filenames with default values if necessary
-bioID_filename <- "signed_log_pv_BioID.tsv"  # Default filename for BioID
-eCLIP_filename <- "signed_log_pv_eCLIP.tsv"  # Default filename for eCLIP
-perturbSeq_filename <- "signed_log_pv_Perturbseq.tsv"  # Default filename for PerturbSeq
+bioID_filename <- "data/signed_log_pv_BioID.tsv"  # Default filename for BioID
+eCLIP_filename <- "data/signed_log_pv_eCLIP.tsv"  # Default filename for eCLIP
+perturbSeq_filename <- "data/signed_log_pv_Perturbseq.tsv"  # Default filename for PerturbSeq
 
 # Parse command line arguments
 for (arg in args) {
@@ -23,10 +16,16 @@ for (arg in args) {
       eCLIP_filename <- key_value[2]
     } else if (key_value[1] == "PerturbSeq") {
       perturbSeq_filename <- key_value[2]
+    } else if (arg[1] == "condapath") {
+      .libPaths( paste(arg[2],"/lib/R/library/",sep="") )
     }
   }
 }
 
+library(metap)
+library(stringr)
+library(colorspace)
+library(gplots)
 
 cos.dissim <- function(x)
 {
@@ -106,8 +105,9 @@ Rank_products_df$BioID[!is.na(Rank_products_df$BioID)] <- obs_pvs(Rank_products_
 Rank_products_df$eCLIP[!is.na(Rank_products_df$eCLIP)] <- obs_pvs(Rank_products_df$eCLIP[!is.na(Rank_products_df$eCLIP)]) + pseudo
 Rank_products_df$PerturbSeq[!is.na(Rank_products_df$PerturbSeq)] <- obs_pvs(Rank_products_df$PerturbSeq[!is.na(Rank_products_df$PerturbSeq)]) + pseudo
 
-#Calculating logitp for all
-RP_res_df_all <- Rank_products_df[,c(1,2)]
+#Calculating logitp
+supported_RBPs <- unique(c(str_split_fixed(Rank_products_df[rowSums(!is.na(Rank_products_df))>2,1], pattern='_', n=2)))
+RP_res_df_all <- Rank_products_df[str_split_fixed(Rank_products_df[,1], pattern='_', n=2)[,1]%in%supported_RBPs&str_split_fixed(Rank_products_df[,1], pattern='_', n=2)[,2]%in%supported_RBPs,c(1,2)]
 colnames(RP_res_df_all)[2] <- 'P-value'
 for(i in RP_res_df_all$Pair){
     curr_pair = as.numeric(Rank_products_df[Rank_products_df$Pair==i,c(2:4)])
@@ -117,9 +117,9 @@ for(i in RP_res_df_all$Pair){
         RP_res_df_all[RP_res_df_all$Pair==i,2] <- logitp(p = curr_pair[!is.na(curr_pair)])$p
     }
 }
-logitp_res_matrix <- matrix(nrow=length(curr_names), ncol=length(curr_names))
-row.names(logitp_res_matrix) <- curr_names
-colnames(logitp_res_matrix) <- curr_names
+logitp_res_matrix <- matrix(nrow=length(supported_RBPs), ncol=length(supported_RBPs))
+row.names(logitp_res_matrix) <- supported_RBPs
+colnames(logitp_res_matrix) <- supported_RBPs
 for(i in colnames(logitp_res_matrix)){
     for(j in colnames(logitp_res_matrix)[colnames(logitp_res_matrix)<i]){
         logitp_res_matrix[colnames(logitp_res_matrix)==i,row.names(logitp_res_matrix)==j] <- RP_res_df_all[str_split_fixed(RP_res_df_all$Pair, pattern = '_', n=2)[,1]==i&str_split_fixed(RP_res_df_all$Pair, pattern = '_', n=2)[,2]==j,2]
@@ -134,6 +134,6 @@ logitp_res_d <- as.dist(cos.dissim(logitp_res_matrix))
 logitp_res_hclust <- hclust(logitp_res_d, method = 'ward.D2')
 logitp_res_hclust_d <- as.dendrogram(logitp_res_hclust)
 
-cairo_pdf("Logitp_heatmap.pdf", family="Lato Semibold", width = 75, height = 75)
-heatmap.2(logitp_res_matrix, trace = "none", col=sequential_hcl(n=319,palette='Purples 3', rev = FALSE)[1:300], Rowv=logitp_res_hclust_d, Colv=logitp_res_hclust_d, density.info="none", dist = function(x) as.dist(cos.dissim(x)), hclustfun = function(x) hclust(x, method = 'ward.D2'), key.title = "none", key.xlab = 'Logitp distance', keysize=0.75, srtCol = 75, notecex = 1.5, lhei = c(1,6), margins = c(15,15), cexRow = 3, cexCol = 3, key.par = list(cex=5))
+cairo_pdf("Logitp_heatmap.pdf", width = 75, height = 75)
+heatmap.2(logitp_res_matrix, trace = "none", col=sequential_hcl(n=319,palette='Purples 3', rev = FALSE)[1:300], Rowv=logitp_res_hclust_d, Colv=logitp_res_hclust_d, density.info="none", dist = function(x) as.dist(cos.dissim(x)), hclustfun = function(x) hclust(x, method = 'ward.D2'), key.title = "", key.xlab = 'Logitp distance', keysize=0.75, srtCol = 75, notecex = 1.5, lhei = c(1,6), margins = c(15,15), cexRow = 3, cexCol = 3, key.par = list(cex=5))
 dev.off()
