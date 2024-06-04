@@ -96,7 +96,7 @@ for(i in seq(from=2,to=ncol(z_scores_signed_pv),by=1)){
 fgseaResList_signed_pv_MF <- list()
 for(i in seq(from=2,to=ncol(z_scores_signed_pv),by=1)){
     print(i)
-    fgseaRes_MF <- fgseaSimple(pathways=go_mf, stats=deframe(z_scores_signed_pv[,c(1,i)])[order(deframe(z_scores_signed_pv[,c(1,i)]), decreasing = FALSE)], nperm=nperm, nproc=nproc)
+    fgseaRes_MF <- fgsea(pathways=go_mf, stats=deframe(z_scores_signed_pv[,c(1,i)])[order(deframe(z_scores_signed_pv[,c(1,i)]), decreasing = FALSE)], nperm=nperm, nproc=nproc)
     fgseaResList_signed_pv_MF[[(i-1)]] <- fgseaRes_MF
 }
 
@@ -104,7 +104,7 @@ for(i in seq(from=2,to=ncol(z_scores_signed_pv),by=1)){
 fgseaResList_signed_pv_CC <- list()
 for(i in seq(from=2,to=ncol(z_scores_signed_pv),by=1)){
     print(i)
-    fgseaRes_CC <- fgseaSimple(pathways=go_cc, stats=deframe(z_scores_signed_pv[,c(1,i)])[order(deframe(z_scores_signed_pv[,c(1,i)]), decreasing = FALSE)], nperm=nperm, nproc=nproc)
+    fgseaRes_CC <- fgsea(pathways=go_cc, stats=deframe(z_scores_signed_pv[,c(1,i)])[order(deframe(z_scores_signed_pv[,c(1,i)]), decreasing = FALSE)], nperm=nperm, nproc=nproc)
     fgseaResList_signed_pv_CC[[(i-1)]] <- fgseaRes_CC
 }
 
